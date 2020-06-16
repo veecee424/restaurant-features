@@ -1,15 +1,15 @@
 const express = require('express')
 const app = express()
-//require database connecttion setup
+//require database connection setup
 require('./db/config')
 const Feature = require('./Model/feature')
 const key = require('./helper/incrementKey')
 const bodyParser = require('body-parser')
-const multer = require('multer')
+const upload = require('./config/multer')
+const uploadToCloudinary = require('./helper/uploadToCloudinary');
 
 app.use(bodyParser.urlencoded({extended: true}))
 app.use(bodyParser.json())
-
 
 
 app.get('/', (req, res) => {
@@ -17,12 +17,15 @@ app.get('/', (req, res) => {
 })
 
 // Upload a feature
-app.post('/upload', async (req, res) => {
+app.post('/upload', upload.single('picture'), async (req, res) => {
 
+    const image = await uploadToCloudinary(req.file.path)
+    console.log(image)
     const newFeature = {
         properties: {
             ...req.body,
-            key: await key()
+            key: await key(),
+            picture: image.url
         },
         geometry: (req.body)
     }
@@ -32,7 +35,7 @@ app.post('/upload', async (req, res) => {
         feature.geometry.coordinates.push(req.body.latitude)
         await feature.save()
         if(feature) {
-            return res.status(201).send({"Success": feature})
+            return res.status(201).send(feature)
         } 
             return res.status(204).send({"error": 'Unable to create feature'})
     } catch (error) {
