@@ -14,12 +14,12 @@ const upload = multer({
         fileSize: 1000000
     }, //Maximum file size in bytes
     fileFilter(req, file, cb) {
-        const validTypes = ['JPEG', 'JPG', 'PNG']
+        const validTypes = ['JPEG', 'JPG', 'PNG'] //acceptable file types
 
         const valid = validTypes.filter((type) => {
             return file.originalname.endsWith(type);
         })
-        valid[0] !== undefined ? cb(null, true) : cb(new Error('Upload a valid image file'))
+        valid[0] !== undefined ? cb(null, true) : cb(new Error('Upload a valid (png, jpeg, or jpg) image file'))
     },
     storage: storage
 })

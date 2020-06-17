@@ -20,7 +20,6 @@ app.get('/', (req, res) => {
 app.post('/upload', upload.single('picture'), async (req, res) => {
 
     const image = await uploadToCloudinary(req.file.path)
-    console.log(image)
     const newFeature = {
         properties: {
             ...req.body,
@@ -41,6 +40,8 @@ app.post('/upload', upload.single('picture'), async (req, res) => {
     } catch (error) {
         return res.status(500).send('Something went wrong')
     }
+}, (e, req, res, next)=> {
+    return res.status(422).send(e.message)
 })
 
 //get all features
@@ -55,5 +56,6 @@ app.get('/features', async (req, res) => {
         return res.status(500).send('Something went wrong')
     }
 })
+
 
 module.exports = app;
