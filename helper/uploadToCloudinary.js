@@ -10,13 +10,13 @@ cloudinary.config({
 const upload = async (file) => {
     
     try {
-       const image = await cloudinary.uploader.upload(file)
+       const image = await cloudinary.uploader.upload(file, {"width": 300, "height": 300})
        if (image) {
            return image
        }
        throw new Error('Unable to upload image')
     } catch (error) {
-        console.log(e)
+        return error
     }
         
 }
